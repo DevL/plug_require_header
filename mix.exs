@@ -16,7 +16,7 @@ defmodule PlugRequireHeader.Mixfile do
 
   defp description do
     """
-    An Elixir Plug for requiring and optionally extracting a given header.
+    An Elixir Plug for requiring and extracting a given header.
     """
   end
 
