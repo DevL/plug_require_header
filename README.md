@@ -34,3 +34,11 @@ end
 Notice how the first value required header `"x-api-key"` has been extracted and can be retrieved using `conn.assigns[:api_key]`. An alternative is to use `Plug.Conn.get_req_header/2` to get all the values associated with a given header.
 
 By default, a missing header will return a status code of 403 (forbidden) and halt the plug pipeline, i.e. no subsequent plugs will be executed. This behaviour is to be configurable in a future version.
+
+## Planned features
+
+* Require and extract multiple header keys and not just one.
+* Make the action taken when a required header is missing configurable.
+  * given an atom -> look up the Plug.Conn.Status code.
+  * given an integer -> treat it as a status code.
+  * given a function -> invoke the function and pass it the `conn` struct and the missing header/connection key pair.
