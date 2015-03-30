@@ -6,6 +6,10 @@ defmodule PlugRequireHeader do
   @doc false
   def version, do: @vsn
 
+  @moduledoc """
+  An Elixir Plug for requiring and extracting a given header.
+  """
+
   @doc """
   Initialises the plug given a keyword list of the following format.
 
