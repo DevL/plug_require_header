@@ -42,3 +42,4 @@ By default, a missing header will return a status code of 403 (forbidden) and ha
   * given an atom -> look up the Plug.Conn.Status code.
   * given an integer -> treat it as a status code.
   * given a function -> invoke the function and pass it the `conn` struct and the missing header/connection key pair.
+  * configurable responses and content-types, e.g. JSON.
