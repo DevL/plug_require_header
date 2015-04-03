@@ -4,7 +4,7 @@ defmodule PlugRequireHeader.Mixfile do
   def project do
     [
       app: :plug_require_header,
-      version: "0.2.1",
+      version: "0.3.0-dev",
       name: "PlugRequireHeader",
       source_url: "https://github.com/DevL/plug_require_header",
       elixir: "~> 1.0",
@@ -22,7 +22,7 @@ defmodule PlugRequireHeader.Mixfile do
 
   defp package do
     [
-      contributors: ["Lennart Fridén"],
+      contributors: ["Lennart Fridén", "Kim Persson"],
       files: ["lib", "mix.exs", "README*", "LICENSE*"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/DevL/plug_require_header"}

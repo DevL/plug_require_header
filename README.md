@@ -11,7 +11,7 @@ An Elixir Plug for requiring and extracting a given header.
 Update your `mix.exs` file and run `mix deps.get`.
 ```elixir
 defp deps do
-  [{:plug_require_header, "~> 0.2"}]
+  [{:plug_require_header, "~> 0.3"}]
 end
 ```
 
@@ -21,7 +21,7 @@ defmodule MyPhoenixApp.MyController do
   use MyPhoenixApp.Web, :controller
   alias Plug.Conn.Status
 
-  plug PlugRequireHeader, api_key: "x-api-key"
+  plug PlugRequireHeader, headers: [api_key: "x-api-key"]
   plug :action
 
   def index(conn, _params) do
@@ -33,13 +33,34 @@ end
 ```
 Notice how the first value required header `"x-api-key"` has been extracted and can be retrieved using `conn.assigns[:api_key]`. An alternative is to use `Plug.Conn.get_req_header/2` to get all the values associated with a given header.
 
-By default, a missing header will return a status code of 403 (forbidden) and halt the plug pipeline, i.e. no subsequent plugs will be executed. The same is true if the required header is explicitly set to nil. This behaviour is to be configurable in a future version.
+By default, a missing header will return a status code of 403 (forbidden) and halt the plug pipeline, i.e. no subsequent plugs will be executed. The same is true if the required header is explicitly set to `nil`. This behaviour however is configurable.
+```elixir
+defmodule MyPhoenixApp.MyOtherController do
+  use MyPhoenixApp.Web, :controller
+  alias Plug.Conn.Status
+
+  plug PlugRequireHeader, headers: [api_key: "x-api-key"], on_missing: {__MODULE__, :handle_missing_header}
+  plug :action
+
+  def index(conn, _params) do
+    conn
+    |> put_status Status.code(:ok)
+    |> text "The API key used is: #{conn.assigns[:api_key]}"
+  end
+
+  def handle_missing_header(conn, missing_header_key) do
+    conn
+    |> send_resp(Status.code(:bad_request), "Missing header: #{missing_header_key}")
+    |> halt
+  end
+end
+```
+If the header is missing or set to `nil` the status code, a status code of 400 (bad request) will be returned before the plug pipeline is halted. Notice that the function specified as a callback needs to be a public function as it'll be invoked from another module.
 
 ## Planned features
 
 * Require and extract multiple header keys and not just one.
-* Make the action taken when a required header is missing configurable.
+* Make the action taken when a required header is missing more configurable.
   * given an atom -> look up the Plug.Conn.Status code.
   * given an integer -> treat it as a status code.
-  * given a function -> invoke the function and pass it the `conn` struct and the missing header/connection key pair.
   * configurable responses and content-types, e.g. JSON.

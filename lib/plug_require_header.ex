@@ -2,7 +2,7 @@ defmodule PlugRequireHeader do
   import Plug.Conn
   alias Plug.Conn.Status
 
-  @vsn "0.2.1"
+  @vsn "0.3.0-dev"
   @doc false
   def version, do: @vsn
 
