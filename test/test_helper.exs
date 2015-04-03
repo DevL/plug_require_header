@@ -4,7 +4,7 @@ defmodule TestApp do
   use Plug.Router
   alias Plug.Conn.Status
 
-  plug PlugRequireHeader, api_key: "x-api-key"
+  plug PlugRequireHeader, headers: [api_key: "x-api-key"]
   plug :match
   plug :dispatch
 

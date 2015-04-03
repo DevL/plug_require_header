@@ -19,7 +19,8 @@ defmodule PlugRequireHeader do
   * The `<header_key>` binary is the header key to be required and extracted.
   """
   def init(options) do
-    options |> List.first
+    headers = Keyword.fetch! options, :headers
+    headers |> List.first
   end
 
   @doc """
