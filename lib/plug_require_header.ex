@@ -43,7 +43,7 @@ defmodule PlugRequireHeader do
 
   defp halt_connection(conn) do
     conn
-    |> put_status(Status.code :forbidden)
+    |> send_resp(Status.code(:forbidden), "")
     |> halt
   end
 end

@@ -10,6 +10,7 @@ defmodule PlugRequireHeaderTest do
     response = TestApp.call(connection, @options)
 
     assert response.status == Status.code(:forbidden)
+    assert response.resp_body == ""
   end
 
   test "block request with a header set, but without the required header" do
@@ -17,6 +18,7 @@ defmodule PlugRequireHeaderTest do
     response = TestApp.call(connection, @options)
 
     assert response.status == Status.code(:forbidden)
+    assert response.resp_body == ""
   end
 
   test "block request with the required header set to nil" do
@@ -24,6 +26,7 @@ defmodule PlugRequireHeaderTest do
     response = TestApp.call(connection, @options)
 
     assert response.status == Status.code(:forbidden)
+    assert response.resp_body == ""
   end
 
   test "extract the required header and assign it to the connection" do
