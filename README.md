@@ -11,7 +11,7 @@ An Elixir Plug for requiring and extracting a given header.
 Update your `mix.exs` file and run `mix deps.get`.
 ```elixir
 defp deps do
-  [{:plug_require_header, "~> 0.1"}]
+  [{:plug_require_header, "~> 0.2"}]
 end
 ```
 
@@ -33,7 +33,7 @@ end
 ```
 Notice how the first value required header `"x-api-key"` has been extracted and can be retrieved using `conn.assigns[:api_key]`. An alternative is to use `Plug.Conn.get_req_header/2` to get all the values associated with a given header.
 
-By default, a missing header will return a status code of 403 (forbidden) and halt the plug pipeline, i.e. no subsequent plugs will be executed. This behaviour is to be configurable in a future version.
+By default, a missing header will return a status code of 403 (forbidden) and halt the plug pipeline, i.e. no subsequent plugs will be executed. The same is true if the required header is explicitly set to nil. This behaviour is to be configurable in a future version.
 
 ## Planned features
 
