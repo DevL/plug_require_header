@@ -51,6 +51,16 @@ defmodule PlugRequireHeaderTest do
     assert response.resp_body == api_key
   end
 
+  @options TestAppWithCallback.init([])
+
+  test "invoke a callback function if the required header is missing" do
+    connection = conn(:get, "/")
+    response = TestAppWithCallback.call(connection, @options)
+
+    assert response.status == Status.code(:precondition_failed)
+    assert response.resp_body == "Missing header: x-api-key"
+  end
+
   defp put_nil_header(%Plug.Conn{req_headers: headers} = conn, key) when is_binary(key) do
     %{conn | req_headers: :lists.keystore(key, 1, headers, {key, nil})}
   end

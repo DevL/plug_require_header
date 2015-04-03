@@ -20,21 +20,30 @@ defmodule PlugRequireHeader do
   """
   def init(options) do
     headers = Keyword.fetch! options, :headers
-    headers |> List.first
+    callback = Keyword.fetch options, :on_missing
+    [List.first(headers), callback]
   end
 
   @doc """
   Extracts the required headers and assign them to the connection struct.
   """
-  def call(conn, {connection_key, header_key}) do
-    extract_header_key(conn, connection_key, header_key)
+  def call(conn, [{connection_key, header_key}, callback_options]) do
+    callback = on_missing(callback_options)
+    extract_header_key(conn, connection_key, header_key, callback)
   end
 
-  defp extract_header_key(conn, connection_key, header_key) do
+  defp on_missing(:error), do: &halt_connection/2
+  defp on_missing({:ok, {module, function}}) do
+    fn (conn, missing_header_key) ->
+      apply module, function, [conn, missing_header_key]
+    end
+  end
+
+  defp extract_header_key(conn, connection_key, header_key, callback) do
     case List.keyfind(conn.req_headers, header_key, 0) do
-      {^header_key, nil} -> halt_connection(conn)
+      {^header_key, nil} -> callback.(conn, header_key)
       {^header_key, value} -> assign_connection_key(conn, connection_key, value)
-      _ -> halt_connection(conn)
+      _ -> callback.(conn, header_key)
     end
   end
 
@@ -42,7 +51,7 @@ defmodule PlugRequireHeader do
     conn |> assign(key, value)
   end
 
-  defp halt_connection(conn) do
+  defp halt_connection(conn, _) do
     conn
     |> send_resp(Status.code(:forbidden), "")
     |> halt
