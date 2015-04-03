@@ -31,6 +31,7 @@ defmodule PlugRequireHeader do
 
   defp extract_header_key(conn, connection_key, header_key) do
     case List.keyfind(conn.req_headers, header_key, 0) do
+      {header_key, nil} -> halt_connection(conn)
       {header_key, value} -> assign_connection_key(conn, connection_key, value)
       _ -> halt_connection(conn)
     end

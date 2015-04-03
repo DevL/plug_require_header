@@ -19,6 +19,13 @@ defmodule PlugRequireHeaderTest do
     assert response.status == Status.code(:forbidden)
   end
 
+  test "block request with the required header set to nil" do
+    connection = conn(:get, "/") |> put_nil_header("x-api-key")
+    response = TestApp.call(connection, @options)
+
+    assert response.status == Status.code(:forbidden)
+  end
+
   test "extract the required header and assign it to the connection" do
     api_key = "12345"
 
@@ -39,5 +46,9 @@ defmodule PlugRequireHeaderTest do
 
     assert response.status == Status.code(:ok)
     assert response.resp_body == api_key
+  end
+
+   defp put_nil_header(%Plug.Conn{req_headers: headers} = conn, key) when is_binary(key) do
+    %{conn | req_headers: :lists.keystore(key, 1, headers, {key, nil})}
   end
 end
