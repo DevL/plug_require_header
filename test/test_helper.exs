@@ -1,12 +1,20 @@
 ExUnit.start()
 
-defmodule TestApp do
-  use Plug.Router
-  alias Plug.Conn.Status
+defmodule AppMaker do
+  defmacro __using__(options) do
+    quote do
+      use Plug.Router
+      alias Plug.Conn.Status
 
-  plug PlugRequireHeader, headers: [api_key: "x-api-key"]
-  plug :match
-  plug :dispatch
+      plug PlugRequireHeader, unquote(options)
+      plug :match
+      plug :dispatch
+    end
+  end
+end
+
+defmodule TestApp do
+  use AppMaker, headers: [api_key: "x-api-key"]
 
   get "/" do
     send_resp(conn, Status.code(:ok), "#{conn.assigns[:api_key]}")
@@ -14,12 +22,7 @@ defmodule TestApp do
 end
 
 defmodule TestAppWithCallback do
-  use Plug.Router
-  alias Plug.Conn.Status
-
-  plug PlugRequireHeader, headers: [api_key: "x-api-key"], on_missing: {__MODULE__, :callback}
-  plug :match
-  plug :dispatch
+  use AppMaker, headers: [api_key: "x-api-key"], on_missing: {__MODULE__, :callback}
 
   get "/" do
     send_resp(conn, Status.code(:ok), "#{conn.assigns[:api_key]}")
