@@ -26,7 +26,7 @@ defmodule MyPhoenixApp.MyController do
 
   def index(conn, _params) do
     conn
-    |> put_status Status.code(:ok)
+    |> put_status(Status.code :ok)
     |> text "The API key used is: #{conn.assigns[:api_key]}"
   end
 end
@@ -44,7 +44,7 @@ defmodule MyPhoenixApp.MyOtherController do
 
   def index(conn, _params) do
     conn
-    |> put_status Status.code(:ok)
+    |> put_status(Status.code :ok)
     |> text "The API key used is: #{conn.assigns[:api_key]}"
   end
 
@@ -57,9 +57,14 @@ end
 ```
 If the header is missing or set to `nil` the status code, a status code of 400 (bad request) will be returned before the plug pipeline is halted. Notice that the function specified as a callback needs to be a public function as it'll be invoked from another module.
 
+Lastly, it's possible to extract multiple headers at the same time.
+
+```elixir
+  plug PlugRequireHeader, headers: [api_key: "x-api-key", magic: "x-magic"]
+```
+
 ## Planned features
 
-* Require and extract multiple header keys and not just one.
 * Make the action taken when a required header is missing more configurable.
   * given an atom -> look up the Plug.Conn.Status code.
   * given an integer -> treat it as a status code.
