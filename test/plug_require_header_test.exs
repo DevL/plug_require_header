@@ -3,11 +3,9 @@ defmodule PlugRequireHeaderTest do
   use Plug.Test
   alias Plug.Conn.Status
 
-  @options TestApp.init([])
-
   test "block request missing the required header" do
     connection = conn(:get, "/")
-    response = TestApp.call(connection, @options)
+    response = TestApp.call(connection, [])
 
     assert response.status == Status.code(:forbidden)
     assert response.resp_body == ""
@@ -15,7 +13,7 @@ defmodule PlugRequireHeaderTest do
 
   test "block request with a header set, but without the required header" do
     connection = conn(:get, "/") |> put_req_header("x-wrong-header", "whatever")
-    response = TestApp.call(connection, @options)
+    response = TestApp.call(connection, [])
 
     assert response.status == Status.code(:forbidden)
     assert response.resp_body == ""
@@ -23,7 +21,7 @@ defmodule PlugRequireHeaderTest do
 
   test "block request with the required header set to nil" do
     connection = conn(:get, "/") |> put_nil_header("x-api-key")
-    response = TestApp.call(connection, @options)
+    response = TestApp.call(connection, [])
 
     assert response.status == Status.code(:forbidden)
     assert response.resp_body == ""
@@ -33,7 +31,7 @@ defmodule PlugRequireHeaderTest do
     api_key = "12345"
 
     connection = conn(:get, "/") |> put_req_header("x-api-key", api_key)
-    response = TestApp.call(connection, @options)
+    response = TestApp.call(connection, [])
 
     assert response.status == Status.code(:ok)
     assert response.resp_body == api_key
@@ -45,17 +43,15 @@ defmodule PlugRequireHeaderTest do
     connection = conn(:get, "/")
     |> put_req_header("x-api-key", api_key)
     |> put_req_header("x-wrong-header", "whatever")
-    response = TestApp.call(connection, @options)
+    response = TestApp.call(connection, [])
 
     assert response.status == Status.code(:ok)
     assert response.resp_body == api_key
   end
 
-  @options TestAppWithCallback.init([])
-
   test "invoke a callback function if the required header is missing" do
     connection = conn(:get, "/")
-    response = TestAppWithCallback.call(connection, @options)
+    response = TestAppWithCallback.call(connection, [])
 
     assert response.status == Status.code(:precondition_failed)
     assert response.resp_body == "Missing header: x-api-key"
