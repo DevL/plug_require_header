@@ -62,7 +62,6 @@ defmodule PlugRequireHeader do
 
   defp extract_header_key(conn, {connection_key, header_key}, callback) do
     case List.keyfind(conn.req_headers, header_key, 0) do
-      {^header_key, nil} -> callback.(conn, header_key)
       {^header_key, value} -> assign_connection_key(conn, connection_key, value)
       _ -> callback.(conn, header_key)
     end
