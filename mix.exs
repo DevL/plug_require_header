@@ -4,7 +4,7 @@ defmodule PlugRequireHeader.Mixfile do
   def project do
     [
       app: :plug_require_header,
-      version: "0.3.0",
+      version: "0.3.1",
       name: "PlugRequireHeader",
       source_url: "https://github.com/DevL/plug_require_header",
       elixir: "~> 1.0",
