@@ -2,7 +2,7 @@ defmodule PlugRequireHeader do
   import Plug.Conn
   alias Plug.Conn.Status
 
-  @vsn "0.3.1"
+  @vsn "0.3.2"
   @doc false
   def version, do: @vsn
 
@@ -71,6 +71,7 @@ defmodule PlugRequireHeader do
     conn |> assign(key, value)
   end
 
+  defp halt_connection(%Plug.Conn{halted: true} = conn, _), do: conn
   defp halt_connection(conn, _) do
     conn
     |> send_resp(Status.code(:forbidden), "")

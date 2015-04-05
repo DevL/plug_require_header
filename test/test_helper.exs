@@ -35,6 +35,14 @@ defmodule TestAppWithCallback do
   end
 end
 
+defmodule TestAppWithMultipleRequiredHeaders do
+  use AppMaker, headers: [api_key: "x-api-key", secret: "x-secret"]
+
+  get "/" do
+    send_resp(conn, Status.code(:ok), "API key: #{conn.assigns[:api_key]} and the secret #{conn.assigns[:secret]}")
+  end
+end
+
 defmodule TestAppWithCallbackAndMultipleRequiredHeaders do
   use AppMaker, headers: [api_key: "x-api-key", secret: "x-secret"], on_missing: {__MODULE__, :callback}
 
@@ -42,9 +50,11 @@ defmodule TestAppWithCallbackAndMultipleRequiredHeaders do
     send_resp(conn, Status.code(:ok), "API key: #{conn.assigns[:api_key]} and the secret #{conn.assigns[:secret]}")
   end
 
-  def callback(conn, missing_header_key) do
-    conn
-    |> send_resp(Status.code(:bad_request), "Missing header: #{missing_header_key}")
-    |> halt
+  def callback(conn, "x-api-key") do
+    conn |> assign :api_key, "not available"
+  end
+
+  def callback(conn, "x-secret") do
+    conn |> assign :secret, "is missing"
   end
 end

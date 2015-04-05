@@ -66,13 +66,28 @@ end
 If the header is missing or set to `nil` the status code, a status code of 400
 (bad request) will be returned before the plug pipeline is halted. Notice that
 the function specified as a callback needs to be a public function as it'll be
-invoked from another module.
+invoked from another module. Also notice that the callback must return a `Plug.Conn` struct.
 
 Lastly, it's possible to extract multiple headers at the same time.
-
 ```elixir
   plug PlugRequireHeader, headers: [api_key: "x-api-key", magic: "x-magic"]
 ```
+
+If extracting multiple headers _and_ specifying an `:on_missing` callback, be aware
+that the callback will be invoked once for each missing header. Be careful to not send
+a response as you can easily run into raising a `Plug.Conn.AlreadySentError`. A way of
+avoiding this is to have your callback function pattern match on the state of the `conn`.
+```elixir
+  plug PlugRequireHeader, headers: [api_key: "x-api-key", secret: "x-secret"], on_missing: {__MODULE__, :handle_missing_header}
+
+  def handle_missing_header(%Plug.Conn{state: :sent} = conn, _), do: conn
+  def handle_missing_header(conn, missing_header_key) do
+    conn
+    |> send_resp(Status.code(:bad_request), "Missing header: #{missing_header_key}")
+    |> halt
+  end
+```
+This example will only send a response for the first missing header.
 
 ## Planned features
 

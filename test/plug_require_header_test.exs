@@ -49,10 +49,27 @@ defmodule PlugRequireHeaderTest do
     connection = conn(:get, "/")
     |> put_req_header("x-api-key", "12345")
     |> put_req_header("x-secret", "handshake")
-    response = TestAppWithCallbackAndMultipleRequiredHeaders.call(connection, [])
+    response = TestAppWithMultipleRequiredHeaders.call(connection, [])
 
     assert response.status == Status.code(:ok)
     assert response.resp_body == "API key: 12345 and the secret handshake"
+  end
+
+  test "block request missing one of several required headers" do
+    connection = conn(:get, "/")
+    |> put_req_header("x-api-key", "12345")
+    response = TestAppWithMultipleRequiredHeaders.call(connection, [])
+
+    assert response.status == Status.code(:forbidden)
+    assert response.resp_body == ""
+  end
+
+  test "block request missing multiple required headers" do
+    connection = conn(:get, "/")
+    response = TestAppWithMultipleRequiredHeaders.call(connection, [])
+
+    assert response.status == Status.code(:forbidden)
+    assert response.resp_body == ""
   end
 
   test "invoke a callback function if any of the required headers are missing" do
@@ -60,7 +77,7 @@ defmodule PlugRequireHeaderTest do
     |> put_req_header("x-api-key", "12345")
     response = TestAppWithCallbackAndMultipleRequiredHeaders.call(connection, [])
 
-    assert response.status == Status.code(:bad_request)
-    assert response.resp_body == "Missing header: x-secret"
+    assert response.status == Status.code(:ok)
+    assert response.resp_body == "API key: 12345 and the secret is missing"
   end
 end
