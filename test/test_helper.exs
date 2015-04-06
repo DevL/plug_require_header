@@ -28,7 +28,7 @@ defmodule TestAppWithCallback do
     send_resp(conn, Status.code(:ok), "#{conn.assigns[:api_key]}")
   end
 
-  def callback(conn, missing_header_key) do
+  def callback(conn, {_, missing_header_key}) do
     conn
     |> send_resp(Status.code(:precondition_failed), "Missing header: #{missing_header_key}")
     |> halt
@@ -50,11 +50,7 @@ defmodule TestAppWithCallbackAndMultipleRequiredHeaders do
     send_resp(conn, Status.code(:ok), "API key: #{conn.assigns[:api_key]} and the secret #{conn.assigns[:secret]}")
   end
 
-  def callback(conn, "x-api-key") do
-    conn |> assign :api_key, "not available"
-  end
-
-  def callback(conn, "x-secret") do
-    conn |> assign :secret, "is missing"
+  def callback(conn, {connection_key, _}) do
+    conn |> assign connection_key, "is missing"
   end
 end

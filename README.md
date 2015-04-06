@@ -56,7 +56,7 @@ defmodule MyPhoenixApp.MyOtherController do
     |> text "The API key used is: #{conn.assigns[:api_key]}"
   end
 
-  def handle_missing_header(conn, missing_header_key) do
+  def handle_missing_header(conn, {_connection_assignment_key, missing_header_key}) do
     conn
     |> send_resp(Status.code(:bad_request), "Missing header: #{missing_header_key}")
     |> halt
@@ -81,7 +81,7 @@ avoiding this is to have your callback function pattern match on the state of th
   plug PlugRequireHeader, headers: [api_key: "x-api-key", secret: "x-secret"], on_missing: {__MODULE__, :handle_missing_header}
 
   def handle_missing_header(%Plug.Conn{state: :sent} = conn, _), do: conn
-  def handle_missing_header(conn, missing_header_key) do
+  def handle_missing_header(conn, {_connection_assignment_key, missing_header_key}) do
     conn
     |> send_resp(Status.code(:bad_request), "Missing header: #{missing_header_key}")
     |> halt

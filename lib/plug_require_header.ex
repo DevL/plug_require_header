@@ -2,7 +2,7 @@ defmodule PlugRequireHeader do
   import Plug.Conn
   alias Plug.Conn.Status
 
-  @vsn "0.3.2"
+  @vsn "0.4.0"
   @doc false
   def version, do: @vsn
 
@@ -63,7 +63,7 @@ defmodule PlugRequireHeader do
   defp extract_header_key(conn, {connection_key, header_key}, callback) do
     case List.keyfind(conn.req_headers, header_key, 0) do
       {^header_key, value} -> assign_connection_key(conn, connection_key, value)
-      _ -> callback.(conn, header_key)
+      _ -> callback.(conn, {connection_key, header_key})
     end
   end
 
