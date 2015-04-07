@@ -11,7 +11,7 @@ An Elixir Plug for requiring and extracting a given header.
 Update your `mix.exs` file and run `mix deps.get`.
 ```elixir
 defp deps do
-  [{:plug_require_header, "~> 0.3"}]
+  [{:plug_require_header, "~> 0.4"}]
 end
 ```
 
