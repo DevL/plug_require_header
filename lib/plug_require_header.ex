@@ -36,10 +36,10 @@ defmodule PlugRequireHeader do
   `:on_missing` - specifies how to handle a missing header. It can be one of
   the following:
 
-  * a callback function with and arity of 2, specified as a tuple of
+  * a callback function with an arity of 2, specified as a tuple of
     `{module, function}`. The function will be called with the `conn` struct
-    and the missing header key. Notice that the callback may be invoked once
-    per required header.
+    and a tuple consisting of a connection assignment key and header key pair.
+    Notice that the callback may be invoked once per required header.
   """
   def call(conn, options) do
     callback = on_missing(Keyword.fetch options, :on_missing)
