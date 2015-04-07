@@ -2,7 +2,7 @@ defmodule PlugRequireHeader do
   import Plug.Conn
   alias Plug.Conn.Status
 
-  @vsn "0.4.1"
+  @vsn "0.5.0"
   @doc false
   def version, do: @vsn
 
@@ -40,6 +40,19 @@ defmodule PlugRequireHeader do
     `{module, function}`. The function will be called with the `conn` struct
     and a tuple consisting of a connection assignment key and header key pair.
     Notice that the callback may be invoked once per required header.
+  * a keyword list with any or all of the following keys set.
+    * `:status` - an `integer` or `atom` to specify the status code. If it's
+    an atom, it'll be looked up using the `Plug.Status.code` function.
+    Default is `:forbidden`.
+    * `:message` - a `binary` sent as the response body.
+    Default is an empty string.
+    * `:as` - an `atom` describing the content type and encoding. Currently
+    supported alternatives are `:text` for plain text and `:json` for JSON.
+    Default is `:text`.
+
+  If setting options instead of using a callback function, notice that the
+  plug pipeline will _always_ be halted by a missing header, and the configured
+  response will _only_ be sent _once_
   """
   def call(conn, options) do
     callback = on_missing(Keyword.fetch options, :on_missing)
