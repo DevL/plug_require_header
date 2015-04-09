@@ -54,3 +54,19 @@ defmodule TestAppWithCallbackAndMultipleRequiredHeaders do
     conn |> assign connection_key, "is missing"
   end
 end
+
+defmodule TestAppRespondingWithJSON do
+  use AppMaker, headers: [api_key: "x-api-key", secret: "x-secret"], on_missing: [status: 418, message: %{error: "I'm a teapot!"}, as: :json]
+
+  get "/" do
+    send_resp(conn, Status.code(:ok), "Never called")
+  end
+end
+
+defmodule TestAppRespondingWithText do
+  use AppMaker, headers: [api_key: "x-api-key", secret: "x-secret"], on_missing: [status: 418, message: "I'm a teapot!", as: :text]
+
+  get "/" do
+    send_resp(conn, Status.code(:ok), "Never called")
+  end
+end

@@ -61,11 +61,31 @@ defmodule PlugRequireHeader do
   end
 
   defp on_missing({:ok, {module, function}}) do
-    fn (conn, missing_header_key) ->
-      apply module, function, [conn, missing_header_key]
+    fn(conn, missing_key_pair) ->
+      apply module, function, [conn, missing_key_pair]
     end
   end
-  defp on_missing(_), do: &halt_connection/2
+  defp on_missing({:ok, config}) when config |> is_list do
+    status = Keyword.get config, :status, Status.code(:forbidden)
+    message = Keyword.get config, :message, ""
+    format = Keyword.get config, :as, :text
+
+    fn(conn, _) ->
+      if conn.halted do
+        conn
+      else
+        conn
+        |> send_resp(status, format_message(message, format))
+        |> halt
+      end
+    end
+  end
+  defp on_missing(_) do
+    &halt_connection/2
+  end
+
+  defp format_message(message, :text), do: message
+  defp format_message(message, :json), do: Poison.encode! message
 
   defp extract_header_keys(conn, [], _callback), do: conn
   defp extract_header_keys(conn, [header|remaining_headers], callback) do
