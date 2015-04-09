@@ -75,6 +75,7 @@ defmodule PlugRequireHeader do
         conn
       else
         conn
+        |> put_resp_header("Content-Type", content_type_for(format))
         |> send_resp(status, format_message(message, format))
         |> halt
       end
@@ -86,6 +87,10 @@ defmodule PlugRequireHeader do
 
   defp format_message(message, :text), do: message
   defp format_message(message, :json), do: Poison.encode! message
+
+  defp content_type_for(:text), do: "text/plain; charset=utf-8"
+  defp content_type_for(:json), do: "application/json"
+
 
   defp extract_header_keys(conn, [], _callback), do: conn
   defp extract_header_keys(conn, [header|remaining_headers], callback) do

@@ -87,6 +87,7 @@ defmodule PlugRequireHeaderTest do
 
     assert response.status == 418
     assert response.resp_body == "I'm a teapot!"
+    assert content_type(response) == "text/plain; charset=utf-8"
   end
 
   test "respond with configured JSON response on missing required headers" do
@@ -95,5 +96,10 @@ defmodule PlugRequireHeaderTest do
 
     assert response.status == 418
     assert response.resp_body == Poison.encode! %{error: "I'm a teapot!"}
+    assert content_type(response) == "application/json"
+  end
+
+  defp content_type(response) do
+    hd get_resp_header(response, "Content-Type")
   end
 end
