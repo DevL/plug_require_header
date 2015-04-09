@@ -9,6 +9,7 @@ defmodule PlugRequireHeaderTest do
 
     assert response.status == Status.code(:forbidden)
     assert response.resp_body == ""
+    assert content_type(response) == "text/plain; charset=utf-8"
   end
 
   test "block request with a header set, but without the required header" do
@@ -17,6 +18,7 @@ defmodule PlugRequireHeaderTest do
 
     assert response.status == Status.code(:forbidden)
     assert response.resp_body == ""
+    assert content_type(response) == "text/plain; charset=utf-8"
   end
 
   test "extract the required header and assign it to the connection" do
@@ -62,6 +64,7 @@ defmodule PlugRequireHeaderTest do
 
     assert response.status == Status.code(:forbidden)
     assert response.resp_body == ""
+    assert content_type(response) == "text/plain; charset=utf-8"
   end
 
   test "block request missing multiple required headers" do

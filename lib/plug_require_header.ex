@@ -60,37 +60,9 @@ defmodule PlugRequireHeader do
     extract_header_keys(conn, headers, callback)
   end
 
-  defp on_missing({:ok, {module, function}}) do
-    fn(conn, missing_key_pair) ->
-      apply module, function, [conn, missing_key_pair]
-    end
-  end
-  defp on_missing({:ok, config}) when config |> is_list do
-    status = Keyword.get config, :status, Status.code(:forbidden)
-    message = Keyword.get config, :message, ""
-    format = Keyword.get config, :as, :text
-
-    fn(conn, _) ->
-      if conn.halted do
-        conn
-      else
-        conn
-        |> put_resp_header("Content-Type", content_type_for(format))
-        |> send_resp(status, format_message(message, format))
-        |> halt
-      end
-    end
-  end
-  defp on_missing(_) do
-    &halt_connection/2
-  end
-
-  defp format_message(message, :text), do: message
-  defp format_message(message, :json), do: Poison.encode! message
-
-  defp content_type_for(:text), do: "text/plain; charset=utf-8"
-  defp content_type_for(:json), do: "application/json"
-
+  defp on_missing({:ok, {module, function}}), do: use_callback(module, function)
+  defp on_missing({:ok, config}) when config |> is_list, do: generate_callback(config)
+  defp on_missing(_), do: generate_callback
 
   defp extract_header_keys(conn, [], _callback), do: conn
   defp extract_header_keys(conn, [header|remaining_headers], callback) do
@@ -109,10 +81,32 @@ defmodule PlugRequireHeader do
     conn |> assign(key, value)
   end
 
-  defp halt_connection(%Plug.Conn{halted: true} = conn, _), do: conn
-  defp halt_connection(conn, _) do
-    conn
-    |> send_resp(Status.code(:forbidden), "")
-    |> halt
+  defp use_callback(module, function) do
+    fn(conn, missing_key_pair) ->
+      apply module, function, [conn, missing_key_pair]
+    end
   end
+
+  defp generate_callback(config \\ []) do
+    status = Keyword.get config, :status, Status.code(:forbidden)
+    message = Keyword.get config, :message, ""
+    format = Keyword.get config, :as, :text
+
+    fn(conn, _) ->
+      if conn.halted do
+        conn
+      else
+        conn
+        |> put_resp_header("Content-Type", content_type_for(format))
+        |> send_resp(status, format_message(message, format))
+        |> halt
+      end
+    end
+  end
+
+  defp content_type_for(:text), do: "text/plain; charset=utf-8"
+  defp content_type_for(:json), do: "application/json"
+
+  defp format_message(message, :text), do: message
+  defp format_message(message, :json), do: Poison.encode! message
 end
