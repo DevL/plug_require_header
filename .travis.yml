@@ -1,8 +1,12 @@
 language: elixir
 elixir:
-  - 1.0.4
+  - 1.0.0
+  - 1.0.1
+  - 1.0.2
+  - 1.0.3
+sudo: false # to use faster container based build environment
 otp_release:
-  - 17.5
+  - 17.3
 after_script:
-  - MIX_ENV=docs mix deps.get
+  - mix deps.get --only docs
   - MIX_ENV=docs mix inch.report
