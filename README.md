@@ -47,7 +47,34 @@ defmodule MyPhoenixApp.MyOtherController do
   use MyPhoenixApp.Web, :controller
   alias Plug.Conn.Status
 
-  plug PlugRequireHeader, headers: [api_key: "x-api-key"], on_missing: {__MODULE__, :handle_missing_header}
+  plug PlugRequireHeader, headers: [api_key: "x-api-key"],
+    on_missing: [status: 418, message: %{error: "I'm a teapot!"}, as: :json]
+  plug :action
+
+  def index(conn, _params) do
+    conn
+    |> put_status(Status.code :ok)
+    |> text "The API key used is: #{conn.assigns[:api_key]}"
+  end
+```
+The `:on_missing` handling can be given a keyword list of options on how to handle
+a missing header.
+
+* `:status` - an `integer` or `atom` to specify the status code. If it's an atom,
+it'll be looked up using the `Plug.Status.code` function. Default is `:forbidden`.
+* `:message` - a `binary` sent as the response body. Default is an empty string.
+* `:as` - an `atom` describing the content type and encoding. Currently supported
+alternatives are `:text` for plain text and `:json` for JSON. Default is `:text`.
+
+You can also provide a function that handles the missing header by specifying a 
+module/function pair in a tuple as the `:on_missing` value.
+```elixir
+defmodule MyPhoenixApp.MyOtherController do
+  use MyPhoenixApp.Web, :controller
+  alias Plug.Conn.Status
+
+  plug PlugRequireHeader, headers: [api_key: "x-api-key"],
+    on_missing: {__MODULE__, :handle_missing_header}
   plug :action
 
   def index(conn, _params) do
@@ -78,7 +105,8 @@ that the callback will be invoked once for each missing header. Be careful to no
 a response as you can easily run into raising a `Plug.Conn.AlreadySentError`. A way of
 avoiding this is to have your callback function pattern match on the state of the `conn`.
 ```elixir
-  plug PlugRequireHeader, headers: [api_key: "x-api-key", secret: "x-secret"], on_missing: {__MODULE__, :handle_missing_header}
+  plug PlugRequireHeader, headers: [api_key: "x-api-key", secret: "x-secret"],
+    on_missing: {__MODULE__, :handle_missing_header}
 
   def handle_missing_header(%Plug.Conn{state: :sent} = conn, _), do: conn
   def handle_missing_header(conn, {_connection_assignment_key, missing_header_key}) do
