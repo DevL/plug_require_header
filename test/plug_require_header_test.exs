@@ -9,6 +9,7 @@ defmodule PlugRequireHeaderTest do
 
     assert response.status == Status.code(:forbidden)
     assert response.resp_body == ""
+    assert content_type(response) == "text/plain; charset=utf-8"
   end
 
   test "block request with a header set, but without the required header" do
@@ -17,6 +18,7 @@ defmodule PlugRequireHeaderTest do
 
     assert response.status == Status.code(:forbidden)
     assert response.resp_body == ""
+    assert content_type(response) == "text/plain; charset=utf-8"
   end
 
   test "extract the required header and assign it to the connection" do
@@ -62,6 +64,7 @@ defmodule PlugRequireHeaderTest do
 
     assert response.status == Status.code(:forbidden)
     assert response.resp_body == ""
+    assert content_type(response) == "text/plain; charset=utf-8"
   end
 
   test "block request missing multiple required headers" do
@@ -79,5 +82,27 @@ defmodule PlugRequireHeaderTest do
 
     assert response.status == Status.code(:ok)
     assert response.resp_body == "API key: 12345 and the secret is missing"
+  end
+
+  test "respond with configured text response on missing required headers" do
+    connection = conn(:get, "/")
+    response = TestAppRespondingWithText.call(connection, [])
+
+    assert response.status == 418
+    assert response.resp_body == "I'm a teapot!"
+    assert content_type(response) == "text/plain; charset=utf-8"
+  end
+
+  test "respond with configured JSON response on missing required headers" do
+    connection = conn(:get, "/")
+    response = TestAppRespondingWithJSON.call(connection, [])
+
+    assert response.status == 418
+    assert response.resp_body == Poison.encode! %{error: "I'm a teapot!"}
+    assert content_type(response) == "application/json"
+  end
+
+  defp content_type(response) do
+    hd get_resp_header(response, "Content-Type")
   end
 end

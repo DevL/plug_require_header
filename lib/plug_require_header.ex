@@ -2,7 +2,7 @@ defmodule PlugRequireHeader do
   import Plug.Conn
   alias Plug.Conn.Status
 
-  @vsn "0.4.1"
+  @vsn "0.5.0"
   @doc false
   def version, do: @vsn
 
@@ -40,6 +40,19 @@ defmodule PlugRequireHeader do
     `{module, function}`. The function will be called with the `conn` struct
     and a tuple consisting of a connection assignment key and header key pair.
     Notice that the callback may be invoked once per required header.
+  * a keyword list with any or all of the following keys set.
+    * `:status` - an `integer` or `atom` to specify the status code. If it's
+    an atom, it'll be looked up using the `Plug.Status.code` function.
+    Default is `:forbidden`.
+    * `:message` - a `binary` sent as the response body.
+    Default is an empty string.
+    * `:as` - an `atom` describing the content type and encoding. Currently
+    supported alternatives are `:text` for plain text and `:json` for JSON.
+    Default is `:text`.
+
+  If setting options instead of using a callback function, notice that the
+  plug pipeline will _always_ be halted by a missing header, and the configured
+  response will _only_ be sent _once_
   """
   def call(conn, options) do
     callback = on_missing(Keyword.fetch options, :on_missing)
@@ -47,12 +60,9 @@ defmodule PlugRequireHeader do
     extract_header_keys(conn, headers, callback)
   end
 
-  defp on_missing({:ok, {module, function}}) do
-    fn (conn, missing_header_key) ->
-      apply module, function, [conn, missing_header_key]
-    end
-  end
-  defp on_missing(_), do: &halt_connection/2
+  defp on_missing({:ok, {module, function}}), do: use_callback(module, function)
+  defp on_missing({:ok, config}) when config |> is_list, do: generate_callback(config)
+  defp on_missing(_), do: generate_callback
 
   defp extract_header_keys(conn, [], _callback), do: conn
   defp extract_header_keys(conn, [header|remaining_headers], callback) do
@@ -71,10 +81,32 @@ defmodule PlugRequireHeader do
     conn |> assign(key, value)
   end
 
-  defp halt_connection(%Plug.Conn{halted: true} = conn, _), do: conn
-  defp halt_connection(conn, _) do
-    conn
-    |> send_resp(Status.code(:forbidden), "")
-    |> halt
+  defp use_callback(module, function) do
+    fn(conn, missing_key_pair) ->
+      apply module, function, [conn, missing_key_pair]
+    end
   end
+
+  defp generate_callback(config \\ []) do
+    status = Keyword.get config, :status, Status.code(:forbidden)
+    message = Keyword.get config, :message, ""
+    format = Keyword.get config, :as, :text
+
+    fn(conn, _) ->
+      if conn.halted do
+        conn
+      else
+        conn
+        |> put_resp_header("Content-Type", content_type_for(format))
+        |> send_resp(status, format_message(message, format))
+        |> halt
+      end
+    end
+  end
+
+  defp content_type_for(:text), do: "text/plain; charset=utf-8"
+  defp content_type_for(:json), do: "application/json"
+
+  defp format_message(message, :text), do: message
+  defp format_message(message, :json), do: Poison.encode! message
 end
