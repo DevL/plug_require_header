@@ -1,4 +1,5 @@
 language: elixir
+sudo: false # to use faster container based build environment
 elixir:
   - 1.0.3
 otp_release:
