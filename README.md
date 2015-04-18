@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/DevL/plug_require_header.svg?branch=master)](https://travis-ci.org/DevL/plug_require_header)
 [![Inline docs](http://inch-ci.org/github/DevL/plug_require_header.svg?branch=master)](http://inch-ci.org/github/DevL/plug_require_header)
 [![Hex.pm](https://img.shields.io/hexpm/v/plug_require_header.svg)](https://hex.pm/packages/plug_require_header)
+[![Documentation](https://img.shields.io/badge/Documentation-online-c800c8.svg)](http://hexdocs.pm/plug_require_header)
 
 An Elixir Plug for requiring and extracting a given header.
 
@@ -116,3 +117,11 @@ avoiding this is to have your callback function pattern match on the state of th
   end
 ```
 This example will only send a response for the first missing header.
+
+## Contributing
+
+1. Fork this repository
+2. Create your feature branch (`git checkout -b I-say-we-take-off-and-nuke-it-from-orbit`)
+3. Commit your changes (`git commit -am 'It is the only way to be sure!'`)
+4. Push to the branch (`git push origin I-say-we-take-off-and-nuke-it-from-orbit`)
+5. Create a new Pull Request
