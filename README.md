@@ -116,10 +116,3 @@ avoiding this is to have your callback function pattern match on the state of th
   end
 ```
 This example will only send a response for the first missing header.
-
-## Planned features
-
-* Make the action taken when a required header is missing more configurable.
-  * given an atom -> look up the Plug.Conn.Status code.
-  * given an integer -> treat it as a status code.
-  * configurable responses and content-types, e.g. JSON.
