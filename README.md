@@ -67,7 +67,7 @@ it'll be looked up using the `Plug.Status.code` function. Default is `:forbidden
 * `:as` - an `atom` describing the content type and encoding. Currently supported
 alternatives are `:text` for plain text and `:json` for JSON. Default is `:text`.
 
-You can also provide a function that handles the missing header by specifying a 
+You can also provide a function that handles the missing header by specifying a
 module/function pair in a tuple as the `:on_missing` value.
 ```elixir
 defmodule MyPhoenixApp.MyOtherController do
@@ -117,6 +117,10 @@ avoiding this is to have your callback function pattern match on the state of th
   end
 ```
 This example will only send a response for the first missing header.
+
+## Online documentation
+
+For more information, see [the full documentation](http://hexdocs.pm/plug_require_header).
 
 ## Contributing
 
