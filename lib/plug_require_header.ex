@@ -97,7 +97,7 @@ defmodule PlugRequireHeader do
         conn
       else
         conn
-        |> put_resp_header("Content-Type", content_type_for(format))
+        |> put_resp_header("content-type", content_type_for(format))
         |> send_resp(status, format_message(message, format))
         |> halt
       end

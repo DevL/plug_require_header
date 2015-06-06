@@ -103,6 +103,6 @@ defmodule PlugRequireHeaderTest do
   end
 
   defp content_type(response) do
-    hd get_resp_header(response, "Content-Type")
+    hd get_resp_header(response, "content-type")
   end
 end
