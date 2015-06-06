@@ -4,7 +4,7 @@ defmodule PlugRequireHeader.Mixfile do
   def project do
     [
       app: :plug_require_header,
-      version: "0.5.0",
+      version: "0.6.0",
       name: "PlugRequireHeader",
       source_url: "https://github.com/DevL/plug_require_header",
       elixir: "~> 1.0",
@@ -35,8 +35,8 @@ defmodule PlugRequireHeader.Mixfile do
 
   defp deps do
     [
-      {:plug, "~> 0.11"},
-      {:poison, "~> 1.3"},
+      {:plug, "~> 0.13"},
+      {:poison, "~> 1.4"},
       {:earmark, "~> 0.1", only: :dev},
       {:ex_doc, "~> 0.7", only: :dev},
       {:inch_ex, only: :docs}
