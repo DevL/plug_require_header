@@ -99,7 +99,7 @@ defmodule PlugRequireHeaderTest do
 
     assert response.status == 418
     assert response.resp_body == Poison.encode! %{error: "I'm a teapot!"}
-    assert content_type(response) == "application/json"
+    assert content_type(response) == "application/json; charset=utf-8"
   end
 
   defp content_type(response) do

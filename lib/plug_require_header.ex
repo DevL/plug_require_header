@@ -97,14 +97,14 @@ defmodule PlugRequireHeader do
         conn
       else
         conn
-        |> put_resp_header("content-type", content_type_for(format))
+        |> put_resp_content_type(content_type_for format)
         |> send_resp(status, format_message(message, format))
         |> halt
       end
     end
   end
 
-  defp content_type_for(:text), do: "text/plain; charset=utf-8"
+  defp content_type_for(:text), do: "text/plain"
   defp content_type_for(:json), do: "application/json"
 
   defp format_message(message, :text), do: message
