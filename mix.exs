@@ -22,7 +22,7 @@ defmodule PlugRequireHeader.Mixfile do
 
   defp package do
     [
-      contributors: ["Lennart Fridén", "Kim Persson"],
+      maintainers: ["Lennart Fridén", "Kim Persson"],
       files: ["lib", "mix.exs", "README*", "LICENSE*"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/DevL/plug_require_header"}
