@@ -51,7 +51,7 @@ defmodule TestAppWithCallbackAndMultipleRequiredHeaders do
   end
 
   def callback(conn, {connection_key, _}) do
-    conn |> assign connection_key, "is missing"
+    conn |> assign(connection_key, "is missing")
   end
 end
 

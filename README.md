@@ -12,7 +12,7 @@ An Elixir Plug for requiring and extracting a given header.
 Update your `mix.exs` file and run `mix deps.get`.
 ```elixir
 defp deps do
-  [{:plug_require_header, "~> 0.7"}]
+  [{:plug_require_header, "~> 0.8"}]
 end
 ```
 
@@ -81,7 +81,7 @@ defmodule MyPhoenixApp.MyOtherController do
   def index(conn, _params) do
     conn
     |> put_status(Status.code :ok)
-    |> text "The API key used is: #{conn.assigns[:api_key]}"
+    |> text("The API key used is: #{conn.assigns[:api_key]}")
   end
 
   def handle_missing_header(conn, {_connection_assignment_key, missing_header_key}) do
