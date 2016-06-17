@@ -36,7 +36,7 @@ defmodule PlugRequireHeader.Mixfile do
   defp deps do
     [
       {:plug, "~> 1.1"},
-      {:poison, "~> 1.5"},
+      {:poison, ">= 1.5.2"},
       {:earmark, "~> 0.2", only: :dev},
       {:ex_doc, "~> 0.11", only: :dev},
       {:inch_ex, ">= 0.4.0", only: :docs}
