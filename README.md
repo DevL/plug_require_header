@@ -1,6 +1,7 @@
 # PlugRequireHeader
 
 [![Build Status](https://travis-ci.org/DevL/plug_require_header.svg?branch=master)](https://travis-ci.org/DevL/plug_require_header)
+[![Deps Status](https://beta.hexfaktor.org/badge/all/github/DevL/plug_require_header.svg)](https://beta.hexfaktor.org/github/DevL/plug_require_header)
 [![Inline docs](http://inch-ci.org/github/DevL/plug_require_header.svg?branch=master)](http://inch-ci.org/github/DevL/plug_require_header)
 [![Hex.pm](https://img.shields.io/hexpm/v/plug_require_header.svg)](https://hex.pm/packages/plug_require_header)
 [![Documentation](https://img.shields.io/badge/Documentation-online-c800c8.svg)](http://hexdocs.pm/plug_require_header)
